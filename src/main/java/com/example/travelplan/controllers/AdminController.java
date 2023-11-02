@@ -13,36 +13,37 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/admin/home/travel-plan")
 public class AdminController {
     @Autowired
      private UserService userService;
 
 
-    @GetMapping("/admin/home/travel-plan/all")
+    @GetMapping("/all")
      ResponseEntity<List<TravelPlan>> getAllTravelPlan(){
         List<TravelPlan> allplans=userService.getAllTravelPlan();
         return ResponseEntity.status(200).body(allplans);
     }
 
-    @GetMapping("/admin/home/travel-plan/{id}")
+    @GetMapping("/{id}")
     ResponseEntity<TravelPlan> getTravelPlanById(@PathVariable Long id) throws UserNotFoundException {
         return ResponseEntity.status(200).body(userService.getTravelPlanById(id));
 
     }
 
-    @PostMapping("/admin/home/travel-plan/add")
+    @PostMapping("/add")
     ResponseEntity<TravelPlan> addnewTravelPlan(@RequestBody TravelPlan travelPlan) throws UserAlreadyExistException {
         return ResponseEntity.status(200).body(userService.addnewTravelPlan(travelPlan));
 
     }
 
-    @DeleteMapping("/admin/home/travel-plan/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     ResponseEntity<TravelPlan> deleteTravelPlanById(@PathVariable Long id) throws UserNotFoundException {
         return ResponseEntity.status(200).body(userService.deleteTravelPlanById(id));
 
     }
 
-    @PutMapping("/admin/home/travel-plan/update/{id}")
+    @PutMapping("/update/{id}")
 
     ResponseEntity<TravelPlan> updateTravelPlanById(@PathVariable Long id,@RequestBody TravelPlan travelPlan) throws UserNotFoundException {
         return ResponseEntity.status(200).body(userService.updateTravelPlanById(id,travelPlan));
@@ -50,7 +51,7 @@ public class AdminController {
 
     }
 
-    @GetMapping("admin/home/users/travel-plan/{id}")
+    @GetMapping("/users/{id}")
     ResponseEntity<List<UserModel>>  getAllUsersofTravelPlan(@PathVariable Long id) throws UserNotFoundException {
         return ResponseEntity.status(200).body(userService.getAllUsersofTravelPlan(id));
 

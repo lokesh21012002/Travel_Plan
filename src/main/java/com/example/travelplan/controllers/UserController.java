@@ -2,15 +2,13 @@ package com.example.travelplan.controllers;
 
 import com.example.travelplan.exceptions.UserAlreadyExistException;
 import com.example.travelplan.exceptions.UserNotFoundException;
+import com.example.travelplan.models.PurchaseModel;
 import com.example.travelplan.models.TravelPlan;
 import com.example.travelplan.models.UserModel;
 import com.example.travelplan.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,6 +39,40 @@ public class UserController {
 
 
     }
+
+    @PostMapping("home/user/travel-plans/new/{id}")
+    ResponseEntity<PurchaseModel> registerInNewPlanById(@PathVariable Long id, @RequestBody UserModel userModel) throws UserNotFoundException{
+
+//            Todo
+
+        return null;
+
+    }
+
+    @DeleteMapping("home/user/travel-plans/exit/{id}")
+    ResponseEntity<?> exitPlanById(@PathVariable Long id,@RequestBody UserModel userModel){
+//        Todo
+
+        return null;
+    }
+
+    @GetMapping("home/user/travelplan/all/{id}")
+    ResponseEntity<List<TravelPlan>>  getAllPlanByUserId(@PathVariable Long id,@RequestBody UserModel userModel){
+//        Todo
+
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

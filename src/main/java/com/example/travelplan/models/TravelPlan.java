@@ -29,6 +29,7 @@ public class TravelPlan {
     private Date date=new Date();
 
     @OneToMany(mappedBy = "travelPlan",fetch = FetchType.EAGER)
+
     private List<PurchaseModel> purchaseModelList;
 
 

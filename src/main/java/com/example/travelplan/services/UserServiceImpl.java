@@ -60,7 +60,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserModel login(UserModel userModel) throws UserNotFoundException {
-//        System.out.println(username);
+
+
+
         Optional<UserModel> userDb=userRepository.findByUsername(userModel.getUsername());
 
 
@@ -79,7 +81,8 @@ public class UserServiceImpl implements UserService {
 
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        if(!encoder.matches(userModel.getPassword(),userDb.get().getPassword()) || !userModel.getRole().equals(userDb.get().getRole())){
+        if(!encoder.matches(userModel.getPassword(),userDb.get().getPassword())){
+//            !userModel.getRole().equals(userDb.get().getRole())
             throw new UserNotFoundException("Invalid Credentials");
         }
 

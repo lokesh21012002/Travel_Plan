@@ -1,6 +1,7 @@
 package com.example.travelplan.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,10 +22,12 @@ public class PurchaseModel {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private UserModel userModel;
 
     @ManyToOne
     @JoinColumn(name = "plan_id")
+    @JsonIgnore
     private TravelPlan travelPlan;
 
 
