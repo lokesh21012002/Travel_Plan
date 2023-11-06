@@ -6,6 +6,8 @@ spring:
 
 
 
+
+
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
@@ -16,3 +18,7 @@ spring:
 
       ddl-auto: update
     show-sql: 'true'
+
+logging:
+  level:
+    root: warn
