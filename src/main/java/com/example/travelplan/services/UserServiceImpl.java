@@ -1,9 +1,8 @@
 package com.example.travelplan.services;
 
-import com.example.travelplan.exceptions.UserAlreadyExistException;
-import com.example.travelplan.exceptions.UserNotFoundException;
+import com.example.travelplan.exceptions.EntityAlreadyExistException;
+import com.example.travelplan.exceptions.EntityNotFoundException;
 //import com.example.travelplan.models.PurchaseModel;
-import com.example.travelplan.models.ErrorMesage;
 import com.example.travelplan.models.PurchaseModel;
 import com.example.travelplan.models.TravelPlan;
 import com.example.travelplan.models.UserModel;
@@ -11,27 +10,23 @@ import com.example.travelplan.models.UserModel;
 import com.example.travelplan.repository.TravelPlanRespository;
 import com.example.travelplan.repository.UserRepository;
 //import com.example.travelplan.repository.UserTravelPlanRepository;
-import org.apache.catalina.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.plaf.OptionPaneUI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
     @Autowired
     @Lazy
     private PasswordEncoderService passwordEncoderService;
@@ -50,15 +45,35 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
 
+@Override
+public UserDetailsService userDetailsService(){
+    return new UserDetailsService() {
+        @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+            if(!userRepository.findByUsername(username).isPresent()){
 
+                try {
+                    throw  new EntityNotFoundException("User not found");
+                } catch (EntityNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+            return  userRepository.findFirstByUsername(username);
+
+
+        }
+    };
+}
 
 
     @Override
-    public UserModel signUp(UserModel userModel) throws UserAlreadyExistException {
+    public UserModel signUp(UserModel userModel) throws EntityAlreadyExistException {
         Optional<UserModel> userDb=userRepository.findByUsername(userModel.getUsername());
 
         if(userDb.isPresent()){
-            throw new UserAlreadyExistException("User Already Exist");
+            throw new EntityAlreadyExistException("User Already Exist");
 
 
         }
@@ -74,7 +89,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserModel login(UserModel userModel) throws UserNotFoundException {
+    public UserModel login(UserModel userModel) throws EntityNotFoundException {
 
 
 
@@ -83,7 +98,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
         if(!userDb.isPresent()){
-            throw new UserNotFoundException("User Not found");
+            throw new EntityNotFoundException("User Not found");
 
         }
 
@@ -98,7 +113,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if(!encoder.matches(userModel.getPassword(),userDb.get().getPassword())){
 //            !userModel.getRole().equals(userDb.get().getRole())
-            throw new UserNotFoundException("Invalid Credentials");
+            throw new EntityNotFoundException("Invalid Credentials");
         }
 
 
@@ -118,11 +133,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public TravelPlan getTravelPlanById(Long id) throws UserNotFoundException {
+    public TravelPlan getTravelPlanById(Long id) throws EntityNotFoundException {
 
         Optional<TravelPlan> travelPlan=travelPlanRespository.findById(id);
         if(!travelPlan.isPresent()){
-            throw new UserNotFoundException("Travel Plan does't exist");
+            throw new EntityNotFoundException("Travel Plan does't exist");
 
         }
 
@@ -132,10 +147,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public TravelPlan addnewTravelPlan(TravelPlan travelPlan) throws UserAlreadyExistException {
+    public TravelPlan addnewTravelPlan(TravelPlan travelPlan) throws EntityAlreadyExistException {
         Optional<TravelPlan> planDb=travelPlanRespository.findTravelPlanByName(travelPlan.getName());
         if(planDb.isPresent()){
-            throw new UserAlreadyExistException("Travel plan already existed");
+            throw new EntityAlreadyExistException("Travel plan already existed");
 
         }
 
@@ -145,10 +160,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public TravelPlan updateTravelPlanById(Long id, TravelPlan travelPlan) throws UserNotFoundException {
+    public TravelPlan updateTravelPlanById(Long id, TravelPlan travelPlan) throws EntityNotFoundException {
         Optional<TravelPlan> travelPlannDb=travelPlanRespository.findById(id);
         if(!travelPlannDb.isPresent()){
-            throw new UserNotFoundException("Travel Plan Does't exist");
+            throw new EntityNotFoundException("Travel Plan Does't exist");
         }
 
         if(Objects.nonNull(travelPlan.getName()) && !"".equalsIgnoreCase(travelPlan.getName())){
@@ -190,24 +205,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //    }
 
     @Override
-    public PurchaseModel registerInNewPlan(Long user_id, Long travel_id) throws UserNotFoundException, UserAlreadyExistException {
+    public PurchaseModel registerInNewPlan(Long user_id, Long travel_id) throws EntityNotFoundException, EntityAlreadyExistException {
 
         Optional<UserModel> userDb=userRepository.findById(user_id);
         if(!userDb.isPresent()){
-            throw new UserNotFoundException("User not Found");
+            throw new EntityNotFoundException("User not Found");
         }
 
         Optional<TravelPlan> travelDb=travelPlanRespository.findById(travel_id);
         if(!travelDb.isPresent()){
-            throw new UserNotFoundException(("Travel Plan does't exits"));
+            throw new EntityNotFoundException(("Travel Plan does't exits"));
         }
 
         if(userDb.get().getTravelPlanList().contains(travelDb.get())){
-            throw  new UserAlreadyExistException("User Already taken the plan");
+            throw  new EntityAlreadyExistException("User Already taken the plan");
         }
 
         if(travelDb.get().getUserModelList().contains(userDb.get())){
-            throw new UserAlreadyExistException("User Already Exists");
+            throw new EntityAlreadyExistException("User Already Exists");
         }
 
         userDb.get().getTravelPlanList().add(travelDb.get());
@@ -271,24 +286,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public PurchaseModel exitFromPlan(Long user_id, Long travel_id) throws UserNotFoundException {
+    public PurchaseModel exitFromPlan(Long user_id, Long travel_id) throws EntityNotFoundException {
 
         Optional<UserModel> userDb=userRepository.findById(user_id);
         if(!userDb.isPresent()){
-            throw new UserNotFoundException("User not found");
+            throw new EntityNotFoundException("User not found");
         }
 
 
         Optional<TravelPlan> travelDb=travelPlanRespository.findById(travel_id);
         if(!travelDb.isPresent()){
-            throw new UserNotFoundException("Travel plan not Found");
+            throw new EntityNotFoundException("Travel plan not Found");
         }
 
 
-        userDb.get().getTravelPlanList().remove(travelDb);
-        travelDb.get().getUserModelList().remove(userDb);
+        userDb.get().getTravelPlanList().remove(userDb.get().getTravelPlanList().indexOf(travelDb.get()));
+
+
+
         userRepository.save(userDb.get());
-        travelPlanRespository.save(travelDb.get());
+
         return new PurchaseModel(HttpStatus.FOUND,user_id,travel_id);
 
 
@@ -325,11 +342,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //    }
 
     @Override
-    public List<TravelPlan> getAllPlanByUserId(Long id) throws UserNotFoundException {
+    public List<TravelPlan> getAllPlanByUserId(Long id) throws EntityNotFoundException {
 
         Optional<UserModel> userDb=userRepository.findById(id);
         if(!userDb.isPresent()){
-            throw new UserNotFoundException("User not exits");
+            throw new EntityNotFoundException("User not exits");
         }
 
         return userRepository.findPlansByUserId(id);
@@ -355,21 +372,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<UserModel> getAllUsersofTravelPlan(Long id) throws UserNotFoundException {
+    public List<UserModel> getAllUsersofTravelPlan(Long id) throws EntityNotFoundException {
         Optional<TravelPlan> travelPlan=travelPlanRespository.findById(id);
         if(!travelPlan.isPresent()){
-            throw new UserNotFoundException("Travel Plan not Found");
+            throw new EntityNotFoundException("Travel Plan not Found");
         }
         return travelPlan.get().getUserModelList();
 
     }
 
     @Override
-    public TravelPlan deleteTravelPlanById(Long id) throws UserNotFoundException {
+    public TravelPlan deleteTravelPlanById(Long id) throws EntityNotFoundException {
 
         Optional<TravelPlan> travelPlanDb=travelPlanRespository.findById(id);
         if(!travelPlanDb.isPresent()){
-            throw new UserNotFoundException("Travel plan does't exist");
+            throw new EntityNotFoundException("Travel plan does't exist");
 
         }
 
@@ -379,10 +396,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
+
 
 //    @Override
 //    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

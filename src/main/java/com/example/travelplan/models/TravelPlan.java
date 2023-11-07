@@ -2,6 +2,7 @@ package com.example.travelplan.models;
 
 
 import com.example.travelplan.services.UserService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +32,9 @@ public class TravelPlan {
     private Date date=new Date();
 
 //    @OneToMany(mappedBy = "travelPlan",fetch = FetchType.EAGER)
-    @ManyToMany(mappedBy = "travelPlanList",fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "travelPlanList",fetch = FetchType.EAGER)
+
+    @JsonIgnore
 
     private List<UserModel> userModelList=new ArrayList<UserModel>();
 

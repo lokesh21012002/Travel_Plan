@@ -1,25 +1,44 @@
 package com.example.travelplan.config;
 
+import com.example.travelplan.models.Role;
+import com.example.travelplan.services.UserService;
+import com.example.travelplan.utils.JwtRequestFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import
         org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @SuppressWarnings("removal")
 @Configuration
-public class WebSecurityConfig  {
+@EnableWebSecurity
+
+@RequiredArgsConstructor
+public class WebSecurityConfig {
+
+    @Autowired
+    private JwtRequestFilter requestFilter;
+
+
+    @Autowired
+    private  UserService userService;
+
+
+
+
 //    @Bean
 //    public PasswordEncoder passwordEncoder() {
 //        return new BCryptPasswordEncoder();
@@ -29,22 +48,47 @@ public class WebSecurityConfig  {
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationProvider userDetailsService() {
+
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userService.userDetailsService());
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return daoAuthenticationProvider;
+
+
     }
 
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests().requestMatchers("/**","/authenticate**", "/login/**","/admin/home/**","/user/**","home/**").permitAll()
-                .anyRequest().authenticated()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().httpBasic();
-        http.headers().frameOptions().disable();
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((request) -> request.requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/user/**").hasAnyAuthority(Role.USER.name())
+                        .anyRequest().authenticated())
+                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(userDetailsService()).addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class
+
+
+                );
         return http.build();
-    }
+
+//                .authorizeRequests().requestMatchers("/**","/authenticate**", "/login/**","/admin/home/**","/user/**","home/**").permitAll()
+//                .anyRequest().authenticated/()
+//                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class)
+//                 .httpBasic();
+//        http.headers().frameOptions().disable();
+//        return http.build();
+//    }
 //    @Bean
 //    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 //
@@ -58,12 +102,6 @@ public class WebSecurityConfig  {
 //                .anyRequest().authenticated()
 //                .and().httpBasic();
 //        return http.build();
-
-
-
-
-
-
 
 
 //        http.csrf().disable();
@@ -114,12 +152,8 @@ public class WebSecurityConfig  {
 //                .logout(LogoutConfigurer::permitAll);
 
 
-
-
-
-
-
 //        http.authorizeHttpRequests((authz)->authz.anyRequest().permitAll());
 //        return http.build();
 //    }
+    }
 }

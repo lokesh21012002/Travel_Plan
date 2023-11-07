@@ -13,14 +13,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ResponseStatus
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(UserAlreadyExistException.class)
-    public ResponseEntity<ErrorMesage> todoNotFoundException(UserAlreadyExistException exception, WebRequest request){
+    @ExceptionHandler(EntityAlreadyExistException.class)
+    public ResponseEntity<ErrorMesage> todoNotFoundException(EntityAlreadyExistException exception, WebRequest request){
         ErrorMesage errorMessage=new ErrorMesage(HttpStatus.BAD_REQUEST,exception.getMessage());
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorMesage> todoNotFoundException(UserNotFoundException exception, WebRequest request){
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMesage> todoNotFoundException(EntityNotFoundException exception, WebRequest request){
         ErrorMesage errorMessage=new ErrorMesage(HttpStatus.BAD_REQUEST,exception.getMessage());
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }

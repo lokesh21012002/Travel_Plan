@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -20,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 
-public class UserModel {
+public class UserModel implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Id
@@ -29,9 +33,9 @@ public class UserModel {
     @Column(unique = true)
     private String username;
     private String password;
-    private String role;
+    private Role  role;
 //    @OneToMany(mappedBy = "userModel")
-   @ManyToMany(fetch=FetchType.LAZY)
+   @ManyToMany(fetch=FetchType.EAGER)
 
 
    @JoinTable(name = "purchase",
@@ -45,8 +49,29 @@ public class UserModel {
      private List<TravelPlan> travelPlanList=new ArrayList<TravelPlan>();
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
 
+    }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

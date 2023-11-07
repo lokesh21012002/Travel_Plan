@@ -2,17 +2,15 @@ package com.example.travelplan.dto;
 
 
 import jakarta.persistence.Entity;
+import jdk.jfr.DataAmount;
 import lombok.*;
 
-@Setter
-
+@Data
 @Getter
-
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 
-@NoArgsConstructor
-
-@ToString
 
 
 
