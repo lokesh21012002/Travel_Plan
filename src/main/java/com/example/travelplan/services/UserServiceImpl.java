@@ -299,6 +299,10 @@ public UserDetailsService userDetailsService(){
             throw new EntityNotFoundException("Travel plan not Found");
         }
 
+        if(userDb.get().getTravelPlanList().indexOf(travelDb.get())==-1){
+            throw new EntityNotFoundException("User have't taken the plan");
+        }
+
 
         userDb.get().getTravelPlanList().remove(userDb.get().getTravelPlanList().indexOf(travelDb.get()));
 

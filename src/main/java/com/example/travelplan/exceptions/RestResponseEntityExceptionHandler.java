@@ -15,14 +15,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(EntityAlreadyExistException.class)
     public ResponseEntity<ErrorMesage> todoNotFoundException(EntityAlreadyExistException exception, WebRequest request){
-        ErrorMesage errorMessage=new ErrorMesage(HttpStatus.BAD_REQUEST,exception.getMessage());
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+        ErrorMesage errorMessage=new ErrorMesage(HttpStatus.valueOf(404),exception.getMessage());
+        return  ResponseEntity.status(HttpStatus.valueOf(200)).body(errorMessage);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorMesage> todoNotFoundException(EntityNotFoundException exception, WebRequest request){
-        ErrorMesage errorMessage=new ErrorMesage(HttpStatus.BAD_REQUEST,exception.getMessage());
-        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+        ErrorMesage errorMessage=new ErrorMesage(HttpStatus.valueOf(404),exception.getMessage());
+        return  ResponseEntity.status(HttpStatus.valueOf(200)).body(errorMessage);
     }
 
 

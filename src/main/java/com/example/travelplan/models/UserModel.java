@@ -35,7 +35,7 @@ public class UserModel implements UserDetails {
     private String password;
     private Role  role;
 //    @OneToMany(mappedBy = "userModel")
-   @ManyToMany(fetch=FetchType.EAGER)
+   @ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.DETACH)
 
 
    @JoinTable(name = "purchase",

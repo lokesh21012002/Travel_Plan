@@ -9,6 +9,7 @@ import com.example.travelplan.models.Role;
 import com.example.travelplan.models.UserModel;
 import com.example.travelplan.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,6 +40,17 @@ public class AuthServiceImpl implements  AuthService{
 
 
     public LoginResponse login(LoginDTO loginDTO) throws EntityNotFoundException {
+        Optional<UserModel> tmp=userRepository.findByUsername(loginDTO.getUsername());
+        if(!tmp.isPresent()){
+            throw new EntityNotFoundException("User Not Found Please Sign up");
+        }
+//        else{
+//
+//
+//        }
+        if(!passwordEncoder.matches(loginDTO.getPassword(),tmp.get().getPassword())){
+            throw new EntityNotFoundException("Invalid Credentials");
+        }
 
 
 
@@ -47,7 +59,7 @@ public class AuthServiceImpl implements  AuthService{
 
 
        Authentication authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),loginDTO.getPassword()));
-
+        System.out.println(authentication.isAuthenticated());
        if(!authentication.isAuthenticated()){
 
            throw new EntityNotFoundException("Invalid Credentials");
@@ -68,6 +80,15 @@ public class AuthServiceImpl implements  AuthService{
         LoginResponse loginResponse=new LoginResponse();
         loginResponse.setToken(token);
         loginResponse.setRefreshToken(refreshedToken);
+        loginResponse.setStatus(HttpStatus.valueOf(200));
+        loginResponse.setUserId(userDb.get().getUser_id());
+
+        if(userDb.get().getRole().name().equals("ADMIN")){
+            loginResponse.setRole("ADMIN");
+        }
+        else{
+            loginResponse.setRole("USER");
+        }
 
         return loginResponse;
 
