@@ -1,12 +1,13 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+#    driver-class-name: com.mysql.jdbc.Driver
     username: root
-    url: jdbc:mysql://localhost:3306/travel_plan
+    url: jdbc:mysql://travel-plan.cyygs5fosaa4.eu-north-1.rds.amazonaws.com:3306/travel_plan
+    password: password
   jpa:
     hibernate:
       enable_lazy_load_no_trans: 'true'
-      ddl-auto: update
+      ddl-auto: create
     show-sql: 'true'
     open-in-view: true
 
