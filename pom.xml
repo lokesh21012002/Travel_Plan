@@ -160,6 +160,9 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>
+			travel-plan
+		</finalName>
 	</build>
 
 </project>
