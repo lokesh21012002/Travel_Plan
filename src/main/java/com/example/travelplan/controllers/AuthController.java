@@ -7,6 +7,7 @@ import com.example.travelplan.exceptions.EntityAlreadyExistException;
 import com.example.travelplan.exceptions.EntityNotFoundException;
 import com.example.travelplan.models.UserModel;
 import com.example.travelplan.services.AuthService;
+import com.example.travelplan.services.NodeApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +27,14 @@ public class AuthController {
     private  AuthService authService;
 
 
+    @Autowired
+    private NodeApiService nodeApiService;
+
+
 
     @PostMapping("/signup")
-    ResponseEntity<UserModel> signup(@RequestBody SignupDTO signupDTO) throws EntityAlreadyExistException {
-        return ResponseEntity.ok(authService.signup(signupDTO));
+    ResponseEntity<?> signup(@RequestBody SignupDTO signupDTO) throws EntityAlreadyExistException {
+        return ResponseEntity.ok(nodeApiService.callNodeApi(signupDTO));
 
 
 
