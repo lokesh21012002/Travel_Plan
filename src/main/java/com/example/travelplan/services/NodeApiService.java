@@ -24,14 +24,17 @@ public class NodeApiService {
 
     public Object callNodeApi(SignupDTO obj){
 
-        String nodeApiUrl="http://localhost:8081/api/v1/auth/signup";
+//        String nodeApiUrl="http://51.20.128.201:80/api/v1/auth/signup";
+        String nodeApiUrl="http://13.53.50.79:80/api/v1/auth/signup";// Nodejs API endpoint
         System.out.println(obj.getUsername());
+//        String nodeApiUrl="http://localhost:8081/api/v1/auth/signup";
         SignupDTO signupDTO=new SignupDTO();
 
         signupDTO.setUsername(obj.getUsername());
         signupDTO.setRole(obj.getRole());
         System.out.println(obj.getPassword());
         signupDTO.setPassword(passwordEncoder.encode(obj.getPassword()));
+
 
 
 
