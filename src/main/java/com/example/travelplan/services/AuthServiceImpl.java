@@ -40,15 +40,27 @@ public class AuthServiceImpl implements  AuthService{
 
 
     public LoginResponse login(LoginDTO loginDTO) throws EntityNotFoundException {
+
         Optional<UserModel> tmp=userRepository.findByUsername(loginDTO.getUsername());
         if(!tmp.isPresent()){
             throw new EntityNotFoundException("User Not Found Please Sign up");
         }
+
+
+
+
 //        else{
+
+
+        System.out.println(loginDTO.getPassword());
+        System.out.println(passwordEncoder.encode(loginDTO.getPassword()));
+        System.out.println(tmp.get().getPassword());
+        System.out.println(passwordEncoder.matches(loginDTO.getPassword(),tmp.get().getPassword()));
 //
 //
 //        }
         if(!passwordEncoder.matches(loginDTO.getPassword(),tmp.get().getPassword())){
+            System.out.println("Passord mismatch");
             throw new EntityNotFoundException("Invalid Credentials");
         }
 

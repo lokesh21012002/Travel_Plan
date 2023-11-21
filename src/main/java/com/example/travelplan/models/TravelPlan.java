@@ -32,7 +32,7 @@ public class TravelPlan {
     private Date date=new Date();
 
 //    @OneToMany(mappedBy = "travelPlan",fetch = FetchType.EAGER)
-    @ManyToMany(mappedBy = "travelPlanList",fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToMany(mappedBy = "travelPlanList",fetch = FetchType.EAGER,  cascade = CascadeType.DETACH)
 
     @JsonIgnore
 
