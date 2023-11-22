@@ -34,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     ResponseEntity<?> signup(@RequestBody SignupDTO signupDTO) throws EntityAlreadyExistException {
-        return ResponseEntity.ok(nodeApiService.callNodeApi(signupDTO));
+        return ResponseEntity.ok(authService.signup(signupDTO));
 
 
 
