@@ -47,27 +47,7 @@ bash \
 Download \
 Copy code \
 docker run -p 8080:8080 travel-plan-management-dashboard-backend:0.0.1-SNAPSHOT \
-API Endpoints
-1. Add a new Travel Plan
-POST /api/v1/travel-plans
 
-2. Delete the Posted Plan
-DELETE /api/v1/travel-plans/{id}
-
-3. Check Registered Users for a Plan
-GET /api/v1/travel-plans/{id}/users
-
-4. Register for a Travel Plan
-POST /api/v1//users/{id}/travel-plans
-
-5. See All the Plans a User is Registered For
-GET /api/v1/users/{id}/travel-plans
-
-6. Exit from Registered Plan
-DELETE /api/v1//users/{id}/travel-plans/{planId}
-
-7. Authenticate User
-POST /api/v1/auth/signup
 
  # License
 This project is licensed under the MIT License - see the LICENSE file for details.
