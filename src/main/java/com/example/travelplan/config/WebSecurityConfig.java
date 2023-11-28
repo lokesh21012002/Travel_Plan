@@ -141,7 +141,7 @@ http.headers().frameOptions().disable().and().cors().and().csrf().disable();
 
         http
 
-                .authorizeHttpRequests((request) -> request.requestMatchers("/api/v1/auth/**").permitAll()
+                .authorizeHttpRequests((request) -> request.anyRequest().permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/user/**").hasAnyAuthority(Role.USER.name())
                         .anyRequest().authenticated())
