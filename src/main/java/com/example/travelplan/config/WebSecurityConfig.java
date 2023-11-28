@@ -80,7 +80,15 @@ public class WebSecurityConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://travel-plan-client.s3-website.ap-south-1.amazonaws.com/**"));
+          corsConfiguration.setAllowedOriginPatterns(Arrays.asList(
+//                "http://travel-plan-client.s3-website.ap-south-1.amazonaws.com/**",
+//                "http://localhost:3000",
+
+                "*"
+                )
+
+
+        );
         corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
                 "Accept", "Authorization", "Origin, Accept", "X-Requested-With",
                 "Access-Control-Request-Method", "Access-Control-Request-Headers"));
