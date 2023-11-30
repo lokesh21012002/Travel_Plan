@@ -8,7 +8,7 @@ spring:
   jpa:
     hibernate:
       enable_lazy_load_no_trans: 'true'
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: 'true'
     open-in-view: true
 
